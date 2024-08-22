@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA5AD63B2C7472200011009F /* song3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA5AD6382C74721F0011009F /* song3.mp3 */; };
+		AA5AD63C2C7472200011009F /* song1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA5AD6392C74721F0011009F /* song1.mp3 */; };
+		AA5AD63D2C7472200011009F /* song2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA5AD63A2C7472200011009F /* song2.mp3 */; };
+		AA5AD6402C7487C80011009F /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5AD63F2C7487C80011009F /* Song.swift */; };
+		AA5AD6422C74881D0011009F /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5AD6412C74881D0011009F /* PlayerViewModel.swift */; };
 		AA6A251F2C7450BE00CABC84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6A251E2C7450BE00CABC84 /* AppDelegate.swift */; };
 		AA6A25212C7450BE00CABC84 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6A25202C7450BE00CABC84 /* SceneDelegate.swift */; };
 		AA6A25232C7450BE00CABC84 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6A25222C7450BE00CABC84 /* PlayerViewController.swift */; };
@@ -19,6 +24,11 @@
 /* Begin PBXFileReference section */
 		63C3FF9E24ED8A36C67B762A /* Pods_Player.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Player.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BCC747A3161FBBDA19CEFCE /* Pods-Player.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Player.debug.xcconfig"; path = "Target Support Files/Pods-Player/Pods-Player.debug.xcconfig"; sourceTree = "<group>"; };
+		AA5AD6382C74721F0011009F /* song3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = song3.mp3; sourceTree = "<group>"; };
+		AA5AD6392C74721F0011009F /* song1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = song1.mp3; sourceTree = "<group>"; };
+		AA5AD63A2C7472200011009F /* song2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = song2.mp3; sourceTree = "<group>"; };
+		AA5AD63F2C7487C80011009F /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		AA5AD6412C74881D0011009F /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		AA6A251B2C7450BE00CABC84 /* Player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Player.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA6A251E2C7450BE00CABC84 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA6A25202C7450BE00CABC84 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,6 +69,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		AA5AD63E2C74722C0011009F /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				AA5AD6392C74721F0011009F /* song1.mp3 */,
+				AA5AD63A2C7472200011009F /* song2.mp3 */,
+				AA5AD6382C74721F0011009F /* song3.mp3 */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
 		AA6A25122C7450BE00CABC84 = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +103,9 @@
 				AA6A251E2C7450BE00CABC84 /* AppDelegate.swift */,
 				AA6A25202C7450BE00CABC84 /* SceneDelegate.swift */,
 				AA6A25222C7450BE00CABC84 /* PlayerViewController.swift */,
+				AA5AD63F2C7487C80011009F /* Song.swift */,
+				AA5AD6412C74881D0011009F /* PlayerViewModel.swift */,
+				AA5AD63E2C74722C0011009F /* Music */,
 				AA6A25242C7450BE00CABC84 /* Main.storyboard */,
 				AA6A25272C7450BF00CABC84 /* Assets.xcassets */,
 				AA6A25292C7450BF00CABC84 /* LaunchScreen.storyboard */,
@@ -152,7 +175,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA6A25282C7450BF00CABC84 /* Assets.xcassets in Resources */,
+				AA5AD63C2C7472200011009F /* song1.mp3 in Resources */,
+				AA5AD63B2C7472200011009F /* song3.mp3 in Resources */,
 				AA6A252B2C7450BF00CABC84 /* Base in Resources */,
+				AA5AD63D2C7472200011009F /* song2.mp3 in Resources */,
 				AA6A25262C7450BE00CABC84 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +233,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA6A25232C7450BE00CABC84 /* PlayerViewController.swift in Sources */,
+				AA5AD6422C74881D0011009F /* PlayerViewModel.swift in Sources */,
+				AA5AD6402C7487C80011009F /* Song.swift in Sources */,
 				AA6A251F2C7450BE00CABC84 /* AppDelegate.swift in Sources */,
 				AA6A25212C7450BE00CABC84 /* SceneDelegate.swift in Sources */,
 			);
