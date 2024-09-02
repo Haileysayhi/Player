@@ -6,9 +6,13 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import AVFoundation
 
 class PlayerViewController: UIViewController {
     
+    // UI
     private let bgView = UIView()
     private let musicCoverImageView = UIImageView()
     
@@ -36,10 +40,15 @@ class PlayerViewController: UIViewController {
     
     private let gradientLayer = CAGradientLayer()
     
+    // Player
+    let player = AVPlayer()
+    var playerItem: AVPlayerItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        setupPlayer()
+        observePlayerTimeUpdates()
     }
 
     private func configureUI() {
@@ -73,22 +82,23 @@ class PlayerViewController: UIViewController {
         }
         view.addSubview(moreBtn)
         
-        configureLabel(label: songName, text: songList.last?.songName, font: "PingFangTC-Semibold", size: 18, color: .white)
-        configureLabel(label: artistName, text: songList.last?.artist, font: "PingFangTC-Regular", size: 16, color: .white)
-        configureLabel(label: songDurationStartLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
-        configureLabel(label: songDurationEndLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
+        configureLabel(for: songName, text: songList.last?.songName, font: "PingFangTC-Semibold", size: 18, color: .white)
+        configureLabel(for: artistName, text: songList.last?.artist, font: "PingFangTC-Regular", size: 16, color: .white)
+        configureLabel(for: songDurationStartLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
+        configureLabel(for: songDurationEndLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
         
-        configureSlider(slider: songLengthSlider)
-        configureSlider(slider: volumeSlider)
+        configureSlider(songLengthSlider)
+        configureSlider(volumeSlider)
         
-        configureButton(button: backwardBtn, pointSize: 30, systemName: "backward.fill", color: .white)
-        configureButton(button: statusBtn, pointSize: 40, systemName: "play.fill", color: .white)
-        configureButton(button: forwardBtn, pointSize: 30, systemName: "forward.fill", color: .white)
-        configureButton(button: raiseVolumeButton, pointSize: 15, systemName: "speaker.wave.3.fill", color: .white)
-        configureButton(button: lowerVolumeButton, pointSize: 15, systemName: "speaker.fill", color: .white)
-        configureButton(button: airPlayBtn, pointSize: 20, systemName: "airplayaudio", color: .white)
-        configureButton(button: lyrisBtn, pointSize: 19, systemName: "quote.bubble", color: .white)
-        configureButton(button: listBtn, pointSize: 21, systemName: "list.bullet", color: .white)
+        configureButton(for: backwardBtn, pointSize: 30, systemName: "backward.fill", color: .white)
+        configureButton(for: statusBtn, pointSize: 40, systemName: "play.fill", color: .white)
+        configureButton(for: statusBtn, pointSize: 40, systemName: "pause.fill", color: .white)
+        configureButton(for: forwardBtn, pointSize: 30, systemName: "forward.fill", color: .white)
+        configureButton(for: raiseVolumeButton, pointSize: 15, systemName: "speaker.wave.3.fill", color: .white)
+        configureButton(for: lowerVolumeButton, pointSize: 15, systemName: "speaker.fill", color: .white)
+        configureButton(for: airPlayBtn, pointSize: 20, systemName: "airplayaudio", color: .white)
+        configureButton(for: lyrisBtn, pointSize: 19, systemName: "quote.bubble", color: .white)
+        configureButton(for: listBtn, pointSize: 21, systemName: "list.bullet", color: .white)
 
        
         NSLayoutConstraint.activate([
@@ -154,6 +164,9 @@ class PlayerViewController: UIViewController {
             listBtn.centerYAnchor.constraint(equalTo: airPlayBtn.centerYAnchor),
 
         ])
+        
+        statusBtn.addTarget(self, action: #selector(updataStatusButton(sender:)), for: .touchUpInside)
+
     }
 
 }
@@ -161,7 +174,7 @@ class PlayerViewController: UIViewController {
 
 extension PlayerViewController {
     
-    private func configureLabel(label: UILabel, text: String?, font: String, size: CGFloat, color: UIColor) {
+    private func configureLabel(for label: UILabel, text: String?, font: String, size: CGFloat, color: UIColor) {
         label.text = text
         label.font = UIFont(name: font, size: size)
         label.textColor = color
@@ -169,7 +182,7 @@ extension PlayerViewController {
         self.view.addSubview(label)
     }
     
-    private func configureSlider(slider: UISlider) {
+    private func configureSlider(_ slider: UISlider) {
         let config = UIImage.SymbolConfiguration(pointSize: 8)
         let image = UIImage(systemName: "circle.fill", withConfiguration: config)
         slider.setThumbImage(image, for: .normal)
@@ -181,7 +194,7 @@ extension PlayerViewController {
         view.addSubview(slider)
     }
     
-    private func configureButton(button: UIButton, pointSize: CGFloat, systemName: String, color: UIColor) {
+    private func configureButton(for button: UIButton, pointSize: CGFloat, systemName: String, color: UIColor) {
         let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: .regular)
         let image = UIImage(systemName: systemName, withConfiguration: config)
         button.setImage(image, for: .normal)
@@ -189,4 +202,60 @@ extension PlayerViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
     }
+    
+    @objc func updataStatusButton(sender: UIButton) {
+        if player.timeControlStatus == .playing {
+            configureButton(for: statusBtn, pointSize: 40, systemName: "play.fill", color: .white)
+            player.pause()
+            print("now is pause")
+        } else if player.timeControlStatus == .paused {
+            configureButton(for: statusBtn, pointSize: 40, systemName: "pause.fill", color: .white)
+            player.play()
+            print("now is play")
+        }
+        
+    }
+    
+    private func setupPlayer() {
+        
+        let url = Bundle.main.url(forResource: songList[2].mp3Name, withExtension: "mp3")!
+        
+        playerItem = AVPlayerItem(url: url)
+        
+        player.replaceCurrentItem(with: playerItem)
+        
+        player.play()
+                
+    }
+    
+    private func updatePlayerInfo() {
+        
+        let currentSongDurationInSecs = CMTimeGetSeconds(player.currentTime())
+        
+        let currentSongDurationSec = String(format: "%02d", Int(currentSongDurationInSecs) % 60)
+        
+        let currentSongDurationMin = String(Int(currentSongDurationInSecs / 60))
+        
+        self.songDurationStartLabel.text = "\(currentSongDurationMin):\(currentSongDurationSec)"
+        
+        let duration = playerItem!.asset.duration // TODO: remove "!"
+        
+        let currentSongTotalDurationInSecs = CMTimeGetSeconds(duration)
+        
+        let remainingSongDuration = currentSongTotalDurationInSecs - currentSongDurationInSecs
+        
+        let remainingSongDurationSec = String(format: "%02d", Int(remainingSongDuration) % 60)
+        
+        let remainingSongDurationMin = String(Int(remainingSongDuration / 60))
+        
+        self.songDurationEndLabel.text = "-\(remainingSongDurationMin):\(remainingSongDurationSec)"
+        
+    }
+    
+    private func observePlayerTimeUpdates() {
+        player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] _ in
+            self?.updatePlayerInfo()
+        }
+    }
+    
 }

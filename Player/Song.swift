@@ -11,6 +11,7 @@ struct SongInfo {
     var songName : String
     var artist : String
     var coverName : String
+    var mp3Name: String
     var backGroundColor : [CGColor]
 }
 
@@ -20,7 +21,8 @@ let songList = [
     SongInfo(
         songName: "rocking chair",
         artist: "Wavcrush",
-        coverName: "1",
+        coverName: "1", 
+        mp3Name: "song1",
         backGroundColor: [
             UIColor(red: 143/255, green: 78/255, blue: 174/255, alpha: 1.0).cgColor,
             UIColor(red: 145/255, green: 77/255, blue: 174/255, alpha: 1.0).cgColor,
@@ -32,6 +34,7 @@ let songList = [
         songName: "lululemon",
         artist: "Lil Jet",
         coverName: "2",
+        mp3Name: "song2",
         backGroundColor: [
             UIColor(red: 59/255, green: 51/255, blue: 54/255, alpha: 1.0).cgColor,
             UIColor(red: 78/255, green: 62/255, blue: 78/255, alpha: 1.0).cgColor,
@@ -41,7 +44,8 @@ let songList = [
     SongInfo(
         songName: "Havana",
         artist: "Camila Cabello",
-        coverName: "3",
+        coverName: "3", 
+        mp3Name: "song3",
         backGroundColor: [
             UIColor(red: 218/255, green: 75/255, blue: 75/255, alpha: 1.0).cgColor,
             UIColor(red: 237/255, green: 104/255, blue: 93/255, alpha: 1.0).cgColor,
