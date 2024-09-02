@@ -43,16 +43,16 @@ class PlayerViewController: UIViewController {
     // Player
     let player = AVPlayer()
     var playerItem: AVPlayerItem?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         setupPlayer()
         observePlayerTimeUpdates()
     }
-
+    
     private func configureUI() {
-                
+        
         musicCoverImageView.translatesAutoresizingMaskIntoConstraints = false
         musicCoverImageView.layer.cornerRadius = 15
         musicCoverImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
@@ -99,8 +99,8 @@ class PlayerViewController: UIViewController {
         configureButton(for: airPlayBtn, pointSize: 20, systemName: "airplayaudio", color: .white)
         configureButton(for: lyrisBtn, pointSize: 19, systemName: "quote.bubble", color: .white)
         configureButton(for: listBtn, pointSize: 21, systemName: "list.bullet", color: .white)
-
-       
+        
+        
         NSLayoutConstraint.activate([
             
             bgView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 80),
@@ -162,13 +162,15 @@ class PlayerViewController: UIViewController {
             
             listBtn.leadingAnchor.constraint(equalTo: airPlayBtn.trailingAnchor, constant: 60),
             listBtn.centerYAnchor.constraint(equalTo: airPlayBtn.centerYAnchor),
-
+            
         ])
         
         statusBtn.addTarget(self, action: #selector(updataStatusButton(sender:)), for: .touchUpInside)
-
+        volumeSlider.addTarget(self, action: #selector(changeVolumeSliderValue), for: .touchDragInside)
+        songLengthSlider.addTarget(self, action: #selector(changeSongLengthSliderValue), for: .touchUpInside)
+        
     }
-
+    
 }
 
 
@@ -187,8 +189,8 @@ extension PlayerViewController {
         let image = UIImage(systemName: "circle.fill", withConfiguration: config)
         slider.setThumbImage(image, for: .normal)
         slider.tintColor = .white
-        slider.minimumValue = 0.1
-        slider.value = 0.0
+        slider.minimumValue = 0.0
+        slider.value = 0.3
         slider.maximumValue = 1
         slider.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(slider)
@@ -203,7 +205,7 @@ extension PlayerViewController {
         view.addSubview(button)
     }
     
-    @objc func updataStatusButton(sender: UIButton) {
+    @objc private func updataStatusButton(sender: UIButton) {
         if player.timeControlStatus == .playing {
             configureButton(for: statusBtn, pointSize: 40, systemName: "play.fill", color: .white)
             player.pause()
@@ -217,45 +219,42 @@ extension PlayerViewController {
     }
     
     private func setupPlayer() {
-        
         let url = Bundle.main.url(forResource: songList[2].mp3Name, withExtension: "mp3")!
-        
         playerItem = AVPlayerItem(url: url)
-        
         player.replaceCurrentItem(with: playerItem)
-        
         player.play()
-                
     }
     
     private func updatePlayerInfo() {
-        
         let currentSongDurationInSecs = CMTimeGetSeconds(player.currentTime())
-        
         let currentSongDurationSec = String(format: "%02d", Int(currentSongDurationInSecs) % 60)
-        
         let currentSongDurationMin = String(Int(currentSongDurationInSecs / 60))
-        
         self.songDurationStartLabel.text = "\(currentSongDurationMin):\(currentSongDurationSec)"
-        
         let duration = playerItem!.asset.duration // TODO: remove "!"
-        
         let currentSongTotalDurationInSecs = CMTimeGetSeconds(duration)
-        
         let remainingSongDuration = currentSongTotalDurationInSecs - currentSongDurationInSecs
-        
         let remainingSongDurationSec = String(format: "%02d", Int(remainingSongDuration) % 60)
-        
         let remainingSongDurationMin = String(Int(remainingSongDuration / 60))
-        
         self.songDurationEndLabel.text = "-\(remainingSongDurationMin):\(remainingSongDurationSec)"
         
+        songLengthSlider.maximumValue = Float(currentSongTotalDurationInSecs)
+        songLengthSlider.value = Float(currentSongDurationInSecs)
     }
     
     private func observePlayerTimeUpdates() {
         player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] _ in
             self?.updatePlayerInfo()
         }
+    }
+    
+    @objc private func changeVolumeSliderValue(_ sender: UISlider) {
+        player.volume = volumeSlider.value
+    }
+    
+    @objc private func changeSongLengthSliderValue(_ sender: UISlider) {
+        let currentSongSec = Int64(songLengthSlider.value)
+        let targetTime = CMTimeMake(value: currentSongSec, timescale: 1)
+        player.seek(to: targetTime)
     }
     
 }
