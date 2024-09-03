@@ -51,6 +51,11 @@ class PlayerViewController: UIViewController {
         configurePlayerUI()
         configureUI()
         observePlayerTimeUpdates()
+        observePlayerEnd()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: AVPlayerItem.didPlayToEndTimeNotification, object: nil)
     }
     
     private func configureUI() {
@@ -212,7 +217,6 @@ extension PlayerViewController {
     }
     
     private func configurePlayer() {
-        index = (index + songList.count) % songList.count
         let url = Bundle.main.url(forResource: songList[index].mp3Name, withExtension: "mp3")!
         playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
@@ -245,14 +249,19 @@ extension PlayerViewController {
         
         songLengthSlider.maximumValue = Float(currentSongTotalDurationInSecs)
         songLengthSlider.value = Float(currentSongDurationInSecs)
-
+        
         player.volume = volumeSlider.value
     }
     
     private func observePlayerTimeUpdates() {
-        player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] _ in
+        player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] value in
             self?.updatePlayerInfo()
+            
         }
+    }
+    
+    private func observePlayerEnd() {
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
     
     @objc private func changeVolumeSliderValue(_ sender: UISlider) {
@@ -266,17 +275,39 @@ extension PlayerViewController {
     }
     
     @objc private func tappedForwardBtn() {
-        index += 1
+        skipToNextSong()
+    }
+    
+    @objc private func tappedBackwardBtn() {
+        skipToPreviousSong()
+    }
+    
+    @objc private func playerDidFinishPlaying() {
+        skipToNextSong()
+    }
+    
+    private func updatePlayerState() {
         configurePlayer()
         configurePlayerUI()
         updatePlayerInfo()
     }
     
-    @objc private func tappedBackwardBtn() {
-        index -= 1
-        configurePlayer()
-        configurePlayerUI()
-        updatePlayerInfo()
+    private func skipToNextSong() {
+        if index == songList.count - 1 {
+            index = 0
+        } else {
+            index += 1
+        }
+        updatePlayerState()
+    }
+    
+    private func skipToPreviousSong() {
+        if index == 0 {
+            index = songList.count - 1
+        } else {
+            index -= 1
+        }
+        updatePlayerState()
     }
     
 }
