@@ -208,10 +208,12 @@ extension PlayerViewController {
         if player.timeControlStatus == .playing {
             configureButton(for: statusBtn, pointSize: 40, systemName: "play.fill", color: .white)
             player.pause()
+            bgView.viewZoomOut()
             print("now is pause")
         } else if player.timeControlStatus == .paused {
             configureButton(for: statusBtn, pointSize: 40, systemName: "pause.fill", color: .white)
             player.play()
+            bgView.viewZoomIn()
             print("now is play")
         }
     }
