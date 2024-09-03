@@ -17,7 +17,6 @@ struct SongInfo {
 
 let songList = [
     
-    //index == 0
     SongInfo(
         songName: "rocking chair",
         artist: "Wavcrush",
@@ -29,7 +28,6 @@ let songList = [
             UIColor(red: 123/255, green: 80/255, blue: 169/255, alpha: 1.0).cgColor,
             UIColor(red: 75/255, green: 61/255, blue: 112/255, alpha: 1.0).cgColor ]),
     
-    //index == 1
     SongInfo(
         songName: "lululemon",
         artist: "Lil Jet",
@@ -40,7 +38,6 @@ let songList = [
             UIColor(red: 78/255, green: 62/255, blue: 78/255, alpha: 1.0).cgColor,
             UIColor(red: 46/255, green: 38/255, blue: 54/255, alpha: 1.0).cgColor ]),
     
-    //index == 2
     SongInfo(
         songName: "Havana",
         artist: "Camila Cabello",

@@ -40,14 +40,16 @@ class PlayerViewController: UIViewController {
     
     private let gradientLayer = CAGradientLayer()
     
-    // Player
+    // player
     let player = AVPlayer()
     var playerItem: AVPlayerItem?
+    var index = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configurePlayer()
+        configurePlayerUI()
         configureUI()
-        setupPlayer()
         observePlayerTimeUpdates()
     }
     
@@ -57,7 +59,6 @@ class PlayerViewController: UIViewController {
         musicCoverImageView.layer.cornerRadius = 15
         musicCoverImageView.layer.shadowOffset = CGSize(width: 0, height: 10)
         musicCoverImageView.clipsToBounds = true
-        musicCoverImageView.image = UIImage(named: "3")
         
         bgView.translatesAutoresizingMaskIntoConstraints = false
         bgView.layer.cornerRadius = 15
@@ -69,10 +70,6 @@ class PlayerViewController: UIViewController {
         
         view.addSubview(bgView)
         
-        gradientLayer.frame = view.bounds
-        gradientLayer.colors =  songList.last?.backGroundColor
-        view.layer.insertSublayer(gradientLayer, at: 0)
-        
         if #available(iOS 15.0, *) {
             let config = UIImage.SymbolConfiguration(pointSize: 26, weight: .regular)
             let hierarchicalConfig = config.applying(UIImage.SymbolConfiguration(hierarchicalColor: .white))
@@ -82,8 +79,6 @@ class PlayerViewController: UIViewController {
         }
         view.addSubview(moreBtn)
         
-        configureLabel(for: songName, text: songList.last?.songName, font: "PingFangTC-Semibold", size: 18, color: .white)
-        configureLabel(for: artistName, text: songList.last?.artist, font: "PingFangTC-Regular", size: 16, color: .white)
         configureLabel(for: songDurationStartLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
         configureLabel(for: songDurationEndLabel, text: "--:--", font: "PingFangTC-Regular", size: 12, color: .white)
         
@@ -168,6 +163,8 @@ class PlayerViewController: UIViewController {
         statusBtn.addTarget(self, action: #selector(updataStatusButton(sender:)), for: .touchUpInside)
         volumeSlider.addTarget(self, action: #selector(changeVolumeSliderValue), for: .touchDragInside)
         songLengthSlider.addTarget(self, action: #selector(changeSongLengthSliderValue), for: .touchUpInside)
+        backwardBtn.addTarget(self, action: #selector(tappedForwardBtn), for: .touchUpInside)
+        forwardBtn.addTarget(self, action: #selector(tappedBackwardBtn), for: .touchUpInside)
         
     }
     
@@ -189,9 +186,6 @@ extension PlayerViewController {
         let image = UIImage(systemName: "circle.fill", withConfiguration: config)
         slider.setThumbImage(image, for: .normal)
         slider.tintColor = .white
-        slider.minimumValue = 0.0
-        slider.value = 0.3
-        slider.maximumValue = 1
         slider.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(slider)
     }
@@ -215,14 +209,26 @@ extension PlayerViewController {
             player.play()
             print("now is play")
         }
-        
     }
     
-    private func setupPlayer() {
-        let url = Bundle.main.url(forResource: songList[2].mp3Name, withExtension: "mp3")!
+    private func configurePlayer() {
+        index = (index + songList.count) % songList.count
+        let url = Bundle.main.url(forResource: songList[index].mp3Name, withExtension: "mp3")!
         playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
         player.play()
+    }
+    
+    private func configurePlayerUI() {
+        configureLabel(for: songName, text: songList[index].songName, font: "PingFangTC-Semibold", size: 18, color: .white)
+        configureLabel(for: artistName, text: songList[index].artist, font: "PingFangTC-Regular", size: 16, color: .white)
+        musicCoverImageView.image = UIImage(named: songList[index].coverName )
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors =  songList[index].backGroundColor
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        volumeSlider.minimumValue = 1
+        volumeSlider.minimumValue = 0
+        volumeSlider.value = 0.5
     }
     
     private func updatePlayerInfo() {
@@ -239,6 +245,8 @@ extension PlayerViewController {
         
         songLengthSlider.maximumValue = Float(currentSongTotalDurationInSecs)
         songLengthSlider.value = Float(currentSongDurationInSecs)
+
+        player.volume = volumeSlider.value
     }
     
     private func observePlayerTimeUpdates() {
@@ -255,6 +263,20 @@ extension PlayerViewController {
         let currentSongSec = Int64(songLengthSlider.value)
         let targetTime = CMTimeMake(value: currentSongSec, timescale: 1)
         player.seek(to: targetTime)
+    }
+    
+    @objc private func tappedForwardBtn() {
+        index += 1
+        configurePlayer()
+        configurePlayerUI()
+        updatePlayerInfo()
+    }
+    
+    @objc private func tappedBackwardBtn() {
+        index -= 1
+        configurePlayer()
+        configurePlayerUI()
+        updatePlayerInfo()
     }
     
 }
